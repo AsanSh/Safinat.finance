@@ -2,14 +2,13 @@
 const nextConfig = {
   images: {
     domains: ['images.unsplash.com', 'via.placeholder.com'],
+    unoptimized: true, // Для статического экспорта
   },
-  i18n: {
-    locales: ['ru', 'en', 'ky'],
-    defaultLocale: 'ru',
-  },
-  output: 'standalone',
-  trailingSlash: false,
+  // i18n убран для статического экспорта
+  output: 'export', // Статический экспорт
+  trailingSlash: true, // Для статического экспорта
   poweredByHeader: false,
+  distDir: 'out', // Папка для статических файлов
 }
 
 module.exports = nextConfig
