@@ -4,6 +4,7 @@ import './globals.css'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { AuthProvider } from '@/contexts/AuthContext'
+import { CurrencyProvider } from '@/contexts/CurrencyContext'
 import { Toaster } from 'react-hot-toast'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -38,23 +39,25 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <body className={inter.className}>
-        <AuthProvider>
-          <Header />
-          <main className="min-h-screen">
-            {children}
-          </main>
-          <Footer />
-          <Toaster 
-            position="top-right"
-            toastOptions={{
-              duration: 4000,
-              style: {
-                background: '#22c55e',
-                color: '#fff',
-              },
-            }}
-          />
-        </AuthProvider>
+        <CurrencyProvider>
+          <AuthProvider>
+            <Header />
+            <main className="min-h-screen">
+              {children}
+            </main>
+            <Footer />
+            <Toaster 
+              position="top-right"
+              toastOptions={{
+                duration: 4000,
+                style: {
+                  background: '#22c55e',
+                  color: '#fff',
+                },
+              }}
+            />
+          </AuthProvider>
+        </CurrencyProvider>
       </body>
     </html>
   )

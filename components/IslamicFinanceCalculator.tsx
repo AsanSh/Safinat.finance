@@ -3,16 +3,14 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Calculator, TrendingUp, Calendar, DollarSign } from 'lucide-react'
-import { getCurrentExchangeRate, formatCurrency } from '@/utils/exchangeRate'
-
-type Currency = 'KGS' | 'USD'
+import { useCurrency } from '@/contexts/CurrencyContext'
+import { formatCurrency } from '@/utils/currency'
 
 const IslamicFinanceCalculator = () => {
-  const [currency, setCurrency] = useState<Currency>('KGS')
+  const { currency, exchangeRate } = useCurrency()
   const [amount, setAmount] = useState(1000000) // 1 млн сом
   const [term, setTerm] = useState(36) // 36 месяцев
   const [rate, setRate] = useState(15) // 15% годовых
-  const [exchangeRate] = useState(getCurrentExchangeRate()) // Курс KGS к USD с НБКР
 
   const calculatePayments = () => {
     const principal = currency === 'USD' ? amount * exchangeRate : amount
@@ -35,7 +33,7 @@ const IslamicFinanceCalculator = () => {
   const results = calculatePayments()
 
   const formatAmountLocal = (amount: number): string => {
-    return formatCurrency(amount, currency)
+    return formatCurrency(amount, currency, exchangeRate)
   }
 
   return (
@@ -58,33 +56,6 @@ const IslamicFinanceCalculator = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Inputs */}
         <div className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Валюта
-            </label>
-            <div className="flex space-x-2">
-              <button
-                onClick={() => setCurrency('KGS')}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  currency === 'KGS'
-                    ? 'bg-primary-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                Сомы (KGS)
-              </button>
-              <button
-                onClick={() => setCurrency('USD')}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  currency === 'USD'
-                    ? 'bg-primary-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                Доллары (USD)
-              </button>
-            </div>
-          </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">

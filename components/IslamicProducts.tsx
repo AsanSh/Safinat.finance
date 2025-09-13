@@ -4,9 +4,8 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { Building2, Home, Car, Briefcase, Calculator, CheckCircle } from 'lucide-react'
-import { getCurrentExchangeRate, formatCurrency } from '@/utils/exchangeRate'
-
-type Currency = 'KGS' | 'USD'
+import { useCurrency } from '@/contexts/CurrencyContext'
+import { formatCurrency } from '@/utils/currency'
 
 const IslamicProducts = () => {
   const [ref, inView] = useInView({
@@ -14,8 +13,7 @@ const IslamicProducts = () => {
     threshold: 0.1,
   })
 
-  const [currency, setCurrency] = useState<Currency>('KGS')
-  const [exchangeRate] = useState(getCurrentExchangeRate()) // Курс KGS к USD с НБКР
+  const { currency, exchangeRate } = useCurrency() // Курс KGS к USD с НБКР
 
   const products = [
     {
@@ -85,7 +83,7 @@ const IslamicProducts = () => {
   ]
 
   const formatAmount = (amount: number): string => {
-    return formatCurrency(amount, currency)
+    return formatCurrency(amount, currency, exchangeRate)
   }
 
   return (
@@ -105,29 +103,21 @@ const IslamicProducts = () => {
             Полный спектр финансовых решений, соответствующих принципам шариата
           </p>
           
-          {/* Currency Switcher */}
+          {/* Currency Info */}
           <div className="flex justify-center mb-8">
-            <div className="flex space-x-2 bg-white rounded-lg p-1 shadow-md">
-              <button
-                onClick={() => setCurrency('KGS')}
-                className={`px-6 py-2 rounded-md font-medium transition-colors ${
-                  currency === 'KGS'
-                    ? 'bg-primary-600 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`}
-              >
-                Сомы (KGS)
-              </button>
-              <button
-                onClick={() => setCurrency('USD')}
-                className={`px-6 py-2 rounded-md font-medium transition-colors ${
-                  currency === 'USD'
-                    ? 'bg-primary-600 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`}
-              >
-                Доллары (USD)
-              </button>
+            <div className="bg-white rounded-lg p-4 shadow-md">
+              <div className="flex items-center space-x-4">
+                <span className="text-gray-700 font-medium">
+                  Текущая валюта: <span className="text-primary-600 font-semibold">
+                    {currency === 'KGS' ? 'Сомы (KGS)' : 'Доллары (USD)'}
+                  </span>
+                </span>
+                {currency === 'USD' && (
+                  <span className="text-sm text-gray-500">
+                    1 USD = {exchangeRate.toFixed(2)} KGS
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         </motion.div>

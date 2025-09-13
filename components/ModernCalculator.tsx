@@ -3,16 +3,14 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Calculator, TrendingUp, Calendar, DollarSign, Coins, Edit3 } from 'lucide-react'
-import { getCurrentExchangeRate, formatCurrency } from '@/utils/exchangeRate'
-
-type Currency = 'KGS' | 'USD'
+import { useCurrency } from '@/contexts/CurrencyContext'
+import { formatCurrency } from '@/utils/currency'
 
 const ModernCalculator = () => {
-  const [currency, setCurrency] = useState<Currency>('KGS')
+  const { currency, exchangeRate } = useCurrency()
   const [amount, setAmount] = useState(1000000) // 1 млн сом
   const [term, setTerm] = useState(36) // 36 месяцев
   const [rate, setRate] = useState(15) // 15% годовых
-  const [exchangeRate] = useState(getCurrentExchangeRate())
 
   const calculatePayments = () => {
     const principal = currency === 'USD' ? amount * exchangeRate : amount
@@ -31,7 +29,7 @@ const ModernCalculator = () => {
   const results = calculatePayments()
 
   const formatAmount = (amount: number): string => {
-    return formatCurrency(amount, currency)
+    return formatCurrency(amount, currency, exchangeRate)
   }
 
   return (
@@ -46,34 +44,24 @@ const ModernCalculator = () => {
         {/* Left Side - Inputs */}
         <div className="p-4 sm:p-6 lg:p-8 bg-gray-50">
           <div className="space-y-6 sm:space-y-8">
-            {/* Currency Selection */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-4">
-                Валюта
-              </label>
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => setCurrency('KGS')}
-                  className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all ${
-                    currency === 'KGS'
-                      ? 'bg-primary-600 text-white shadow-lg'
-                      : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
-                  }`}
-                >
-                  <Coins className="w-5 h-5 inline mr-2" />
-                  Сомы (KGS)
-                </button>
-                <button
-                  onClick={() => setCurrency('USD')}
-                  className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all ${
-                    currency === 'USD'
-                      ? 'bg-primary-600 text-white shadow-lg'
-                      : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
-                  }`}
-                >
-                  <DollarSign className="w-5 h-5 inline mr-2" />
-                  Доллары (USD)
-                </button>
+            {/* Currency Info */}
+            <div className="bg-white p-4 rounded-xl border border-gray-200">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  {currency === 'KGS' ? (
+                    <Coins className="w-5 h-5 text-primary-600" />
+                  ) : (
+                    <DollarSign className="w-5 h-5 text-primary-600" />
+                  )}
+                  <span className="font-semibold text-gray-700">
+                    {currency === 'KGS' ? 'Сомы (KGS)' : 'Доллары (USD)'}
+                  </span>
+                </div>
+                {currency === 'USD' && (
+                  <span className="text-sm text-gray-500">
+                    1 USD = {exchangeRate.toFixed(2)} KGS
+                  </span>
+                )}
               </div>
             </div>
 

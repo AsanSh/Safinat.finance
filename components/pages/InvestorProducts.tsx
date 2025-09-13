@@ -11,7 +11,8 @@ import {
   Calculator, 
   CheckCircle 
 } from 'lucide-react'
-import { getCurrentExchangeRate, formatCurrency } from '@/utils/exchangeRate'
+import { useCurrency } from '@/contexts/CurrencyContext'
+import { formatCurrency } from '@/utils/currency'
 
 const InvestorProducts = () => {
   const [ref, inView] = useInView({
@@ -19,8 +20,7 @@ const InvestorProducts = () => {
     threshold: 0.1,
   })
 
-  const [currency, setCurrency] = useState<'KGS' | 'USD'>('KGS')
-  const [exchangeRate] = useState(getCurrentExchangeRate())
+  const { currency, exchangeRate } = useCurrency()
 
   const products = [
     {
@@ -90,7 +90,7 @@ const InvestorProducts = () => {
   ]
 
   const formatAmount = (amount: number): string => {
-    return formatCurrency(amount, currency)
+    return formatCurrency(amount, currency, exchangeRate)
   }
 
   return (
@@ -110,31 +110,6 @@ const InvestorProducts = () => {
             Полный спектр исламских инвестиционных инструментов с гарантированной доходностью
           </p>
           
-          {/* Currency Switcher */}
-          <div className="flex justify-center mb-8">
-            <div className="flex space-x-2 bg-white rounded-lg p-1 shadow-md">
-              <button
-                onClick={() => setCurrency('KGS')}
-                className={`px-6 py-2 rounded-md font-medium transition-colors ${
-                  currency === 'KGS'
-                    ? 'bg-primary-600 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`}
-              >
-                Сомы (KGS)
-              </button>
-              <button
-                onClick={() => setCurrency('USD')}
-                className={`px-6 py-2 rounded-md font-medium transition-colors ${
-                  currency === 'USD'
-                    ? 'bg-primary-600 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`}
-              >
-                Доллары (USD)
-              </button>
-            </div>
-          </div>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

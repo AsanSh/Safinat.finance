@@ -6,9 +6,10 @@ interface LogoProps {
   className?: string
   showText?: boolean
   size?: 'sm' | 'md' | 'lg'
+  shouldUseWhiteText?: boolean
 }
 
-const Logo = ({ className = '', showText = true, size = 'md' }: LogoProps) => {
+const Logo = ({ className = '', showText = true, size = 'md', shouldUseWhiteText = false }: LogoProps) => {
   const sizeClasses = {
     sm: 'w-8 h-8',
     md: 'w-12 h-12',
@@ -111,10 +112,14 @@ const Logo = ({ className = '', showText = true, size = 'md' }: LogoProps) => {
       {/* Company name */}
       {showText && (
         <div className="flex flex-col">
-          <span className={`font-bold text-gray-900 ${textSizeClasses[size]}`}>
+          <span className={`font-bold ${textSizeClasses[size]} ${
+            shouldUseWhiteText ? 'text-white' : 'text-gray-900'
+          }`}>
             Safinat Finance
           </span>
-          <span className="text-xs text-gray-600 hidden sm:block">
+          <span className={`text-xs hidden sm:block ${
+            shouldUseWhiteText ? 'text-white text-opacity-80' : 'text-gray-600'
+          }`}>
             Исламское финансирование
           </span>
         </div>

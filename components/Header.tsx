@@ -6,7 +6,9 @@ import { usePathname } from 'next/navigation'
 import { Menu, X, ChevronDown, User, LogOut } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import CurrencySwitcher from './CurrencySwitcher'
+import SearchButton from './SearchButton'
 import AuthModal from './AuthModal'
+import ContactModal from './ContactModal'
 import Logo from './Logo'
 import { useAuth } from '@/contexts/AuthContext'
 
@@ -15,6 +17,7 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false)
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login')
   const pathname = usePathname()
   const { user, isAuthenticated, logout } = useAuth()
@@ -29,22 +32,24 @@ const Header = () => {
 
   const navigation = [
     { name: 'Главная', href: '/' },
+    { name: 'Инвесторам', href: '/investors' },
+    { name: 'Бизнесу', href: '/business' },
     { 
-      name: 'Услуги', 
-      href: '#',
+      name: 'О нас', 
+      href: '/about',
       dropdown: [
-        { name: 'Для инвесторов', href: '/investors' },
-        { name: 'Для бизнеса', href: '/business' },
-        { name: 'Калькулятор', href: '/calculator' },
+        { name: 'Шариатский совет', href: '/sharia-compliance' },
+        { name: 'Документы', href: '/documents' },
+        { name: 'Контакты', href: '/contacts' },
       ]
     },
-    { name: 'Шариатский совет', href: '/sharia-compliance' },
-    { name: 'О нас', href: '/about' },
-    { name: 'Документы', href: '/documents' },
-    { name: 'Контакты', href: '/contacts' },
   ]
 
   const isActive = (href: string) => pathname === href
+
+  // Определяем, нужен ли темный фон для Header
+  const needsDarkHeader = pathname === '/' // Только на главной странице темный фон
+  const shouldUseWhiteText = !isScrolled && needsDarkHeader
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -56,6 +61,7 @@ const Header = () => {
           <Logo 
             size="md" 
             showText={true}
+            shouldUseWhiteText={shouldUseWhiteText}
             className="hover:opacity-80 transition-opacity"
           />
 
@@ -69,7 +75,9 @@ const Header = () => {
                     onMouseEnter={() => setActiveDropdown(item.name)}
                     onMouseLeave={() => setActiveDropdown(null)}
                   >
-                    <button className="flex items-center space-x-1 text-gray-700 hover:text-primary-600 transition-colors duration-200">
+                    <button className={`flex items-center space-x-1 transition-colors duration-200 ${
+                      shouldUseWhiteText ? 'text-white hover:text-green-300' : 'text-gray-700 hover:text-primary-600'
+                    }`}>
                       <span>{item.name}</span>
                       <ChevronDown className="w-4 h-4" />
                     </button>
@@ -100,8 +108,8 @@ const Header = () => {
                     href={item.href}
                     className={`transition-colors duration-200 ${
                       isActive(item.href)
-                        ? 'text-primary-600 font-semibold'
-                        : 'text-gray-700 hover:text-primary-600'
+                        ? shouldUseWhiteText ? 'text-green-400 font-semibold' : 'text-primary-600 font-semibold'
+                        : shouldUseWhiteText ? 'text-white hover:text-green-300' : 'text-gray-700 hover:text-primary-600'
                     }`}
                   >
                     {item.name}
@@ -111,41 +119,53 @@ const Header = () => {
             ))}
           </div>
 
-          {/* Currency Switcher & CTA Button */}
-          <div className="hidden md:flex items-center space-x-2 lg:space-x-3">
-            <div className="hidden xl:block">
-              <CurrencySwitcher />
-            </div>
+          {/* Currency, Search, Auth & CTA Buttons */}
+          <div className="hidden md:flex items-center space-x-3">
+            <CurrencySwitcher shouldUseWhiteText={shouldUseWhiteText} />
+            <SearchButton shouldUseWhiteText={shouldUseWhiteText} />
             {isAuthenticated ? (
               <div className="hidden lg:flex items-center space-x-2">
-                <span className="text-sm text-gray-600">Привет, {user?.fullName}</span>
-                <Link href="/dashboard" className="text-gray-700 hover:text-primary-600 transition-colors text-sm font-medium whitespace-nowrap">
+                <span className={`text-sm ${shouldUseWhiteText ? 'text-white' : 'text-gray-600'}`}>
+                  Привет, {user?.fullName}
+                </span>
+                <Link href="/dashboard" className={`transition-colors text-sm font-medium whitespace-nowrap ${
+                  shouldUseWhiteText ? 'text-white hover:text-green-300' : 'text-gray-700 hover:text-primary-600'
+                }`}>
                   Личный кабинет
                 </Link>
                 <button
                   onClick={logout}
-                  className="text-gray-700 hover:text-primary-600 transition-colors text-sm font-medium whitespace-nowrap flex items-center space-x-1"
+                  className={`transition-colors text-sm font-medium whitespace-nowrap flex items-center space-x-1 ${
+                    shouldUseWhiteText ? 'text-white hover:text-green-300' : 'text-gray-700 hover:text-primary-600'
+                  }`}
                 >
                   <LogOut className="w-4 h-4" />
                   <span>Выйти</span>
                 </button>
               </div>
             ) : (
-              <button
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => {
                   setAuthMode('login')
                   setIsAuthModalOpen(true)
                 }}
-                className="text-gray-700 hover:text-primary-600 transition-colors text-sm font-medium hidden lg:block whitespace-nowrap flex items-center space-x-1"
+                className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-200 ${
+                  shouldUseWhiteText 
+                    ? 'bg-white bg-opacity-20 hover:bg-opacity-30' 
+                    : 'bg-gray-200 hover:bg-gray-300'
+                }`}
               >
-                <User className="w-4 h-4" />
-                <span>Войти</span>
-              </button>
+                <User className={`w-5 h-5 ${shouldUseWhiteText ? 'text-white' : 'text-gray-800'}`} />
+              </motion.button>
             )}
-            <Link href="/contacts" className="btn-primary text-sm px-2 py-2 lg:px-3 lg:py-2 xl:px-4 xl:py-2 whitespace-nowrap">
-              <span className="hidden lg:inline">Получить консультацию</span>
-              <span className="lg:hidden">Консультация</span>
-            </Link>
+            <button
+              onClick={() => setIsContactModalOpen(true)}
+              className="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-lg transition-colors duration-200 whitespace-nowrap text-sm"
+            >
+              Связаться
+            </button>
           </div>
 
           {/* Mobile menu button */}
@@ -167,9 +187,10 @@ const Header = () => {
               className="lg:hidden bg-white border-t border-gray-200"
             >
               <div className="py-4 space-y-2">
-                {/* Mobile Currency Switcher */}
-                <div className="px-4 pb-4 border-b border-gray-200">
-                  <CurrencySwitcher />
+                {/* Mobile Currency Switcher & Search */}
+                <div className="px-4 pb-4 border-b border-gray-200 flex items-center space-x-3">
+                  <CurrencySwitcher shouldUseWhiteText={false} />
+                  <SearchButton shouldUseWhiteText={false} />
                 </div>
                 
                 {navigation.map((item) => (
@@ -261,6 +282,12 @@ const Header = () => {
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
         initialMode={authMode}
+      />
+
+      {/* Contact Modal */}
+      <ContactModal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
       />
     </header>
   )

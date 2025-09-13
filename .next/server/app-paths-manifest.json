@@ -1,7 +1,0 @@
-{
-  "/page": "app/page.js",
-  "/icon.svg/route": "app/icon.svg/route.js",
-  "/investors/page": "app/investors/page.js",
-  "/sharia-compliance/page": "app/sharia-compliance/page.js",
-  "/about/page": "app/about/page.js"
-}
