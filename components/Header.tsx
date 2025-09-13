@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X, ChevronDown, User, LogOut } from 'lucide-react'
+import { Menu, X, ChevronDown, User, LogOut, Bell } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import CurrencySwitcher from './CurrencySwitcher'
 import SearchButton from './SearchButton'
@@ -124,24 +124,36 @@ const Header = () => {
             <CurrencySwitcher shouldUseWhiteText={shouldUseWhiteText} />
             <SearchButton shouldUseWhiteText={shouldUseWhiteText} />
             {isAuthenticated ? (
-              <div className="hidden lg:flex items-center space-x-2">
-                <span className={`text-sm ${shouldUseWhiteText ? 'text-white' : 'text-gray-600'}`}>
-                  Привет, {user?.fullName}
-                </span>
-                <Link href="/dashboard" className={`transition-colors text-sm font-medium whitespace-nowrap ${
-                  shouldUseWhiteText ? 'text-white hover:text-green-300' : 'text-gray-700 hover:text-primary-600'
-                }`}>
-                  Личный кабинет
-                </Link>
-                <button
-                  onClick={logout}
-                  className={`transition-colors text-sm font-medium whitespace-nowrap flex items-center space-x-1 ${
+              <div className="hidden lg:flex items-center space-x-3">
+                <div className="flex items-center space-x-2">
+                  <span className={`text-sm ${shouldUseWhiteText ? 'text-white' : 'text-gray-600'}`}>
+                    Привет, {user?.fullName}
+                  </span>
+                  <Link href="/dashboard" className={`transition-colors text-sm font-medium whitespace-nowrap ${
                     shouldUseWhiteText ? 'text-white hover:text-green-300' : 'text-gray-700 hover:text-primary-600'
-                  }`}
-                >
-                  <LogOut className="w-4 h-4" />
-                  <span>Выйти</span>
-                </button>
+                  }`}>
+                    Личный кабинет
+                  </Link>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <button className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-200 ${
+                    shouldUseWhiteText
+                      ? 'bg-white bg-opacity-20 hover:bg-opacity-30'
+                      : 'bg-gray-200 hover:bg-gray-300'
+                  }`}>
+                    <Bell className={`w-4 h-4 ${shouldUseWhiteText ? 'text-white' : 'text-gray-600'}`} />
+                  </button>
+                  <button
+                    onClick={logout}
+                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-200 ${
+                      shouldUseWhiteText
+                        ? 'bg-white bg-opacity-20 hover:bg-opacity-30'
+                        : 'bg-gray-200 hover:bg-gray-300'
+                    }`}
+                  >
+                    <LogOut className={`w-4 h-4 ${shouldUseWhiteText ? 'text-white' : 'text-gray-600'}`} />
+                  </button>
+                </div>
               </div>
             ) : (
               <motion.button

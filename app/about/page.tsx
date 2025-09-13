@@ -1,4 +1,4 @@
-import AboutHero from '@/components/pages/AboutHero'
+import AboutMindMap from '@/components/pages/AboutMindMap'
 import MissionVision from '@/components/pages/MissionVision'
 import CompanyHistory from '@/components/pages/CompanyHistory'
 import TeamSection from '@/components/pages/TeamSection'
@@ -14,7 +14,7 @@ export const metadata = {
 export default function AboutPage() {
   return (
     <>
-      <AboutHero />
+      <AboutMindMap />
       <MissionVision />
       <CompanyHistory />
       <ValuesSection />
